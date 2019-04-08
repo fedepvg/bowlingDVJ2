@@ -15,11 +15,23 @@ public class Ball : MonoBehaviour
     public GameObject lane;
     float leftLim;
     float rightLim;
+    float timer;
+    int rolls;
+
+    public int getRolls()
+    {
+        return rolls;
+    }
+
+    public void initRolls()
+    {
+        rolls = 0;
+    }
 
     private void OnEnable()
     {
         rig.isKinematic = true;
-        ballSpeed = 800f;
+        ballSpeed = 1000f;
         transform.position = initPos;
         transform.rotation = initRot;
         rig.useGravity = false;
@@ -34,6 +46,7 @@ public class Ball : MonoBehaviour
         initPos = transform.position;
         initRot = transform.rotation;
         rig = GetComponent<Rigidbody>();
+
     }
 
     // Start is called before the first frame update
@@ -75,18 +88,25 @@ public class Ball : MonoBehaviour
         {
             ballSpeed = 1700;
         }
-    }
 
-    private void FixedUpdate()
-    {
-        if (rig.velocity.z <= 0.15f && wasThrown)
+        if ((rig.velocity.z <= 0f && wasThrown) || !gameObject.activeSelf)
         {
-            gameObject.SetActive(false);
-            gameObject.SetActive(true);
+            timer += Time.deltaTime;
+            if (timer>2f)
+            {
+                gameObject.SetActive(false);
+            }
+            else if(timer>3f)
+            {
+                timer = 0f;
+                gameObject.SetActive(true);
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && !wasThrown)
         {
+            rolls++;
+            Debug.Log("roll " + rolls);
             rig.useGravity = true;
             wasThrown = true;
             rig.AddForce(Vector3.forward * ballSpeed, ForceMode.Acceleration);

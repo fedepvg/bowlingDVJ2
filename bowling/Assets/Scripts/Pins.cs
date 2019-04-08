@@ -9,11 +9,17 @@ public class Pins : MonoBehaviour
     float posY = -1.3f;
     float baseZ = 16f;
     float lineDistance = 1f;
-    float[] posX = new float[9] {-2.12f,-1.69f,-1.06f,-0.53f,0f,0.53f,1.06f,1.69f,2.12f };
+    float[] posX = new float[9] { -2.12f, -1.69f, -1.06f, -0.53f, 0f, 0.53f, 1.06f, 1.69f, 2.12f };
+    public GameObject ball;
 
     public void SetNum(int n)
     {
         num = n;
+    }
+
+    private void Awake()
+    {
+        ball=GameObject.Find("ball");
     }
 
     private void OnEnable()
@@ -70,9 +76,18 @@ public class Pins : MonoBehaviour
     // Update is called once per frames
     void Update()
     {
-        if(transform.rotation.z<=-70 || transform.rotation.z>=70)
+        if ((transform.rotation.eulerAngles.z <= -70 || transform.rotation.eulerAngles.z >= 70 || transform.rotation.eulerAngles.x <= -70 || transform.rotation.eulerAngles.x >= 70)
+            && !ball.activeInHierarchy)
         {
             gameObject.SetActive(false);
+
+        }
+
+        if(ball.GetComponent<Ball>().getRolls()==3)
+        {
+            gameObject.SetActive(false);
+            ball.GetComponent<Ball>().initRolls();
+            gameObject.SetActive(true);
         }
     }
 }
