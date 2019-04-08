@@ -5,12 +5,13 @@ using UnityEngine;
 public class Pins : MonoBehaviour
 {
     int num;
-    Transform pinTransf;
+    //Transform pinTransf;
     float posY = -1.3f;
     float baseZ = 16f;
     float lineDistance = 1f;
     float[] posX = new float[9] { -2.12f, -1.69f, -1.06f, -0.53f, 0f, 0.53f, 1.06f, 1.69f, 2.12f };
     public GameObject ball;
+    float timer;
 
     public void SetNum(int n)
     {
@@ -75,18 +76,14 @@ public class Pins : MonoBehaviour
     // Update is called once per frames
     void Update()
     {
-        if ((transform.rotation.eulerAngles.z <= -70 || transform.rotation.eulerAngles.z >= 70 || transform.rotation.eulerAngles.x <= -70 || transform.rotation.eulerAngles.x >= 70)
-            && !ball.activeInHierarchy)
+        if (transform.rotation.eulerAngles.z <= -70 || transform.rotation.eulerAngles.z >= 70 || transform.rotation.eulerAngles.x <= -70 || transform.rotation.eulerAngles.x >= 70)
         {
-            gameObject.SetActive(false);
-
-        }
-
-        if(ball.GetComponent<Ball>().getRolls()==3)
-        {
-            gameObject.SetActive(false);
-            ball.GetComponent<Ball>().initRolls();
-            gameObject.SetActive(true);
+            timer += Time.deltaTime;
+            if (timer > 2f)
+            {
+                timer = 0f;
+                gameObject.SetActive(false);
+            }
         }
     }
 }

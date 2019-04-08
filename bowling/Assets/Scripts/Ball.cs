@@ -16,6 +16,7 @@ public class Ball : MonoBehaviour
     float rightLim;
     float timer;
     int rolls;
+    public GameObject pinManager;
 
     public int getRolls()
     {
@@ -27,20 +28,20 @@ public class Ball : MonoBehaviour
         rolls = 0;
     }
 
-    private void OnEnable()
+    public void ResetBall()
     {
+        rig.isKinematic = true;
         ballSpeed = 1000f;
         transform.position = initPos;
-        rig.useGravity = false;
         wasThrown = false;
         rig.velocity = new Vector3(0, 0, 0);
         rig.rotation = Quaternion.identity;
         rig.isKinematic = false;
-    }
-
-    private void OnDisable()
-    {
-        rig.isKinematic = true;
+        if(rolls==3 || pinManager.GetComponent<PinManager>().GetDisables()==10)
+        {
+            rolls = 0;
+            pinManager.GetComponent<PinManager>().SetResetPins(true);
+        }
     }
 
     private void Awake()
@@ -65,39 +66,38 @@ public class Ball : MonoBehaviour
 
         if (horMov != 0 && !wasThrown)
         {
-            transform.position += transform.right * horMov * 5f * Time.deltaTime;
+            transform.position += Vector3.right * horMov * 5f * Time.deltaTime;
         }
         if (verMov != 0 && !wasThrown)
         {
             ballSpeed += verMov * baseSpeed * Time.deltaTime;
             Debug.Log("vel:" + ballSpeed);
         }
-        if (transform.position.x < leftLim)
+        if (transform.position.x < leftLim && !wasThrown)
         {
-            transform.position = initPos + transform.right * leftLim;
+            transform.position = initPos + Vector3.right * leftLim;
         }
-        if (transform.position.x > rightLim)
+        if (transform.position.x > rightLim && !wasThrown)
         {
-            transform.position = initPos + transform.right * rightLim;
+            transform.position = initPos + Vector3.right * rightLim;
         }
 
-        if (ballSpeed < 800)
+        if (ballSpeed < 1000)
         {
-            ballSpeed = 800;
+            ballSpeed = 1000;
         }
         if (ballSpeed > 1700)
         {
             ballSpeed = 1700;
         }
 
-        if (rig.velocity.z <= 0f && wasThrown)
+        if (rig.velocity.z <= 0.1f && wasThrown)
         {
             timer += Time.deltaTime;
             if (timer>2f)
             {
-                gameObject.SetActive(false);
+                ResetBall();
                 timer = 0f;
-                //gameObject.SetActive(true);
             }
         }
 
@@ -105,7 +105,6 @@ public class Ball : MonoBehaviour
         {
             rolls++;
             Debug.Log("roll " + rolls);
-            rig.useGravity = true;
             wasThrown = true;
             rig.AddForce(Vector3.forward * ballSpeed, ForceMode.Acceleration);
         }
