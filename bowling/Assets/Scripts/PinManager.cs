@@ -5,6 +5,7 @@ using UnityEngine;
 public class PinManager : MonoBehaviour
 {
     public GameObject pins;
+    List<GameObject> instances;
 
 
     // Start is called before the first frame update
@@ -12,16 +13,16 @@ public class PinManager : MonoBehaviour
     {
         for (int i = 0; i < 10; i++)
         {
-            GameObject go = Instantiate(pins);
-            go.SetActive(false);
-            go.GetComponent<Pins>().SetNum(i);
-            go.SetActive(true);
+            instances.Add(Instantiate(pins));
+            instances[i].SetActive(false);
+            instances[i].GetComponent<Pins>().SetNum(i);
+            instances[i].SetActive(true);
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+           
     }
 }

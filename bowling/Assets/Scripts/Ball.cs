@@ -11,7 +11,6 @@ public class Ball : MonoBehaviour
     float ballSpeed;
     bool wasThrown = false;
     Vector3 initPos;
-    Quaternion initRot;
     public GameObject lane;
     float leftLim;
     float rightLim;
@@ -30,10 +29,8 @@ public class Ball : MonoBehaviour
 
     private void OnEnable()
     {
-        rig.isKinematic = true;
         ballSpeed = 1000f;
         transform.position = initPos;
-        transform.rotation = initRot;
         rig.useGravity = false;
         wasThrown = false;
         rig.velocity = new Vector3(0, 0, 0);
@@ -41,10 +38,14 @@ public class Ball : MonoBehaviour
         rig.isKinematic = false;
     }
 
+    private void OnDisable()
+    {
+        rig.isKinematic = true;
+    }
+
     private void Awake()
     {
         initPos = transform.position;
-        initRot = transform.rotation;
         rig = GetComponent<Rigidbody>();
 
     }
@@ -62,11 +63,11 @@ public class Ball : MonoBehaviour
         horMov = Input.GetAxis("Horizontal");
         verMov = Input.GetAxis("Vertical");
 
-        if (horMov != 0)
+        if (horMov != 0 && !wasThrown)
         {
             transform.position += transform.right * horMov * 5f * Time.deltaTime;
         }
-        if (verMov != 0)
+        if (verMov != 0 && !wasThrown)
         {
             ballSpeed += verMov * baseSpeed * Time.deltaTime;
             Debug.Log("vel:" + ballSpeed);
@@ -89,17 +90,14 @@ public class Ball : MonoBehaviour
             ballSpeed = 1700;
         }
 
-        if ((rig.velocity.z <= 0f && wasThrown) || !gameObject.activeSelf)
+        if (rig.velocity.z <= 0f && wasThrown)
         {
             timer += Time.deltaTime;
             if (timer>2f)
             {
                 gameObject.SetActive(false);
-            }
-            else if(timer>3f)
-            {
                 timer = 0f;
-                gameObject.SetActive(true);
+                //gameObject.SetActive(true);
             }
         }
 

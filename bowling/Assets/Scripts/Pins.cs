@@ -56,7 +56,6 @@ public class Pins : MonoBehaviour
             case 9:
                 transform.position = new Vector3(posX[7], posY, baseZ + lineDistance * 3);
                 break;
-
         }
     }
 
