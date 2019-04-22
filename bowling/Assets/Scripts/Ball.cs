@@ -15,18 +15,7 @@ public class Ball : MonoBehaviour
     float leftLim;
     float rightLim;
     float timer;
-    int rolls;
     public GameObject pinManager;
-
-    public int getRolls()
-    {
-        return rolls;
-    }
-
-    public void initRolls()
-    {
-        rolls = 0;
-    }
 
     public void ResetBall()
     {
@@ -37,10 +26,9 @@ public class Ball : MonoBehaviour
         rig.velocity = new Vector3(0, 0, 0);
         rig.rotation = Quaternion.identity;
         rig.isKinematic = false;
-        if(rolls==3 || pinManager.GetComponent<PinManager>().GetDisables()==10)
+        if (GameManager.Instance.Rolls== 3)
         {
-            rolls = 0;
-            pinManager.GetComponent<PinManager>().SetResetPins(true);
+            GameManager.Instance.ResetGame();
         }
     }
 
@@ -103,8 +91,8 @@ public class Ball : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && !wasThrown)
         {
-            rolls++;
-            Debug.Log("roll " + rolls);
+            GameManager.Instance.AddRoll();
+            Debug.Log("roll " + GameManager.Instance.Rolls);
             wasThrown = true;
             rig.AddForce(Vector3.forward * ballSpeed, ForceMode.Acceleration);
         }

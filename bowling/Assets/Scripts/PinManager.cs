@@ -4,64 +4,41 @@ using UnityEngine;
 
 public class PinManager : MonoBehaviour
 {
-    public GameObject pins;
-    GameObject[] instances = new GameObject[10];
-    bool resetPins = false;
+    private static PinManager instance;
+    int disabledPins;
 
-    public int GetDisables()
+    private void Awake()
     {
-        int disablesCount = 0;
-
-        for (int i = 0; i < 10; i++)
+        if (instance != null)
         {
-            if (!instances[i].activeSelf)
-            {
-                disablesCount++;
-            }
+            Destroy(gameObject);
+            return;
         }
-
-        return disablesCount;
+        instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
-    public void SetResetPins(bool s)
+    private void Update()
     {
-        resetPins = s;
-    }
-
-    public bool GetResetPins()
-    {
-        return resetPins;
-    }
-
-    void ResetPins()
-    {
-        for (int i = 0; i < 10; i++)
+        if(DisabledPins==10)
         {
-            instances[i].SetActive(false);
-            instances[i].SetActive(true);
+            GameManager.Instance.ResetGame();
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    public static PinManager Instance
     {
-        for (int i = 0; i < 10; i++)
-        {
-            GameObject go = Instantiate(pins);
-            instances[i] = go;
-            instances[i].SetActive(false);
-            instances[i].GetComponent<Pins>().SetNum(i);
-            instances[i].SetActive(true);
-        }
+        get { return instance; }
     }
 
-    // Update is called once per frame
-    void Update()
+    public int DisabledPins
     {
-        if(resetPins)
-        {
-            ResetPins();
-            resetPins = false;
-        }
+        get { return disabledPins; }
+        set { disabledPins = value; }
+    }
+
+    public void AddDisablePinCount()
+    {
+        disabledPins++;
     }
 }
